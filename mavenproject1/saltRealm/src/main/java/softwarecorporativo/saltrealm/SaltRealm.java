@@ -71,7 +71,7 @@ public class SaltRealm extends AppservRealm {
 
     @Override
     @SuppressWarnings("UseOfObsoleteCollectionType")
-    public Enumeration getGroupNames(String string) throws InvalidOperationException, NoSuchUserException {
+    public Enumeration getGroupNames(String username) throws InvalidOperationException, NoSuchUserException {
         Vector<String> vector = new Vector<String>();
         StringTokenizer tokenizer = new StringTokenizer(getGroupsSql());
 
@@ -79,6 +79,7 @@ public class SaltRealm extends AppservRealm {
             String str = (String) tokenizer.nextElement();
             vector.add(str);
         }
+        
         return vector.elements();
     }
 }
