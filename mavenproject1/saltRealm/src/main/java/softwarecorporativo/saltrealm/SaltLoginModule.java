@@ -15,7 +15,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.security.auth.login.LoginException;
 import javax.sql.DataSource;
@@ -27,15 +29,16 @@ import org.glassfish.hk2.utilities.BuilderHelper;
  * @author MASC
  */
 public class SaltLoginModule extends AppservPasswordLoginModule {
-    private DataSource dataSource;
+    private static DataSource dataSource;
 
-    private Connection getConnection() throws NamingException, SQLException {
-        if (this.dataSource == null) {
+    private synchronized Connection getConnection() throws NamingException, SQLException {
+        if (dataSource == null) {
             SaltRealm realm = (SaltRealm) _currentRealm;
             ActiveDescriptor<ConnectorRuntime> cr = (ActiveDescriptor<ConnectorRuntime>) Util.getDefaultHabitat().getBestDescriptor(BuilderHelper.createContractFilter(ConnectorRuntime.class.getName()));
             ConnectorRuntime connectorRuntime = Util.getDefaultHabitat().getServiceHandle(cr).getService();
             dataSource = (DataSource) connectorRuntime.lookupNonTxResource(realm.getJtaDataSource(), false);
         }
+        
         return dataSource.getConnection();
     }
 
@@ -77,14 +80,22 @@ public class SaltLoginModule extends AppservPasswordLoginModule {
             stmt = conn.prepareStatement(realm.getGroupsQuery());
             stmt.setString(1, _username);
             rs = stmt.executeQuery();
-
-            if (rs.next()) {
+            
+            List<String> groups = new ArrayList<>();
+            while (rs.next()) {
                 String group = rs.getString(1);
-                commitUserAuthentication(new String[]{group});
+                groups.add(group);
+            }
+            
+            String[] groupsArray = new String[groups.size()];
+            int i = 0;
+            for (String group : groups) {
+                groupsArray[i++] = group;
             }
 
             rs.close();
             stmt.close();
+            commitUserAuthentication(groupsArray);            
         } catch (SQLException | NamingException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         } finally {

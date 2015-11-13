@@ -8,6 +8,7 @@ import com.sun.enterprise.security.auth.realm.NoSuchRealmException;
 import com.sun.enterprise.security.auth.realm.NoSuchUserException;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Vector;
 
 /**
  *
@@ -62,6 +63,10 @@ public class SaltRealm extends AppservRealm {
     
     @Override
     public Enumeration getGroupNames(String string) throws InvalidOperationException, NoSuchUserException {
-        return null;
+        @SuppressWarnings("UseOfObsoleteCollectionType")
+        Vector<String> vector = new Vector<String>();
+        vector.add("admin");
+        vector.add("usr");
+        return vector.elements();
     }
 }
