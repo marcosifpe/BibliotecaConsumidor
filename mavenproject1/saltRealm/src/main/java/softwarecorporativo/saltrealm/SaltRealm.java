@@ -36,7 +36,6 @@ public class SaltRealm extends AppservRealm {
     public static final String JTA_DATA_SOURCE = "jta-data-source";
     public static final String HASH_ALGORITHM = "hash-algorithm";
     public static final String CHARSET = "charset";
-    public static final String GROUPS_SQL = "groups-sql";
 
     private static DataSource dataSource;
 
@@ -72,10 +71,6 @@ public class SaltRealm extends AppservRealm {
         } catch (SQLException ex) {
             throw new SaltRealmException(ex);
         }
-    }
-
-    public String getGroupsSql() {
-        return super.getProperty(GROUPS_SQL);
     }
 
     public String getCharset() {
