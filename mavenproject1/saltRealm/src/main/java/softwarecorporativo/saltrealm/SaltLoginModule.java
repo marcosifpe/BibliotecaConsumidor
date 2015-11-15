@@ -25,7 +25,7 @@ public class SaltLoginModule extends AppservPasswordLoginModule {
             for (String group : groupsList) {
                 groups[i++] = group;
             }
-
+            
             commitUserAuthentication(groups);
         } else {
             throw new LoginException("Invalid login!");
