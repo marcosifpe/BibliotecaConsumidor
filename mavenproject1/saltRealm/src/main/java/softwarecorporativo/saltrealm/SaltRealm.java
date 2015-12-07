@@ -132,6 +132,8 @@ public class SaltRealm extends AppservRealm {
                 if (passwd == null || !passwd.equals(getHash(salt, password))) {
                     result = false;
                 }
+            } else {
+                result = false;
             }
         } catch (SQLException ex) {
             throw new SaltRealmException(ex);
